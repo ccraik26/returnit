@@ -41,7 +41,7 @@ export default function Home() {
               </h1>
               <p className="mt-6 text-lg leading-8 text-zinc-600 sm:text-xl">
                 Upload receipts once. Get reminders before the window closes.
-                Then we pick up your returns on Monday or Friday — no trips to the store.
+                Then we pick up your returns on Monday and Friday — no trips to the store.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Link
@@ -139,7 +139,8 @@ export default function Home() {
                 <p className="mt-1 text-sm text-zinc-500">per week</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-600">
                   <li>• 1 bulk pickup every week</li>
-                  <li>• Monday or Friday</li>
+                  <li>• Monday <strong>or</strong> Friday</li>
+                  <li>• 4 pickups per month</li>
                   <li>• Cancel anytime</li>
                 </ul>
               </div>
@@ -153,8 +154,9 @@ export default function Home() {
                 <div className="mt-2 text-3xl font-bold text-zinc-900">$60</div>
                 <p className="mt-1 text-sm text-zinc-500">per month</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-600">
-                  <li>• 1 bulk pickup every week</li>
-                  <li>• Monday or Friday</li>
+                  <li>• Bulk pickups every week</li>
+                  <li>• Monday <strong>and</strong> Friday</li>
+                  <li>• Up to 8 pickups per month</li>
                   <li>• Cancel anytime</li>
                 </ul>
               </div>
