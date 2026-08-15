@@ -10,7 +10,7 @@ export default function SignupPage() {
   const [state, formAction, pending] = useActionState(signUp, initialState);
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center">
           <Link href="/" className="text-2xl font-bold tracking-tight text-zinc-900">
@@ -19,13 +19,13 @@ export default function SignupPage() {
           <h1 className="mt-6 text-xl font-semibold text-zinc-900">Create account</h1>
           <p className="mt-2 text-sm text-zinc-600">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-zinc-900 underline">
+            <Link href="/login" className="font-medium text-emerald-600 hover:text-emerald-500">
               Log in
             </Link>
           </p>
         </div>
 
-        <form action={formAction} className="mt-8 space-y-4">
+        <form action={formAction} className="mt-8 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-zinc-700">
               Full name
@@ -36,7 +36,7 @@ export default function SignupPage() {
               name="full_name"
               required
               autoComplete="name"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -49,7 +49,7 @@ export default function SignupPage() {
               name="email"
               required
               autoComplete="email"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -63,7 +63,7 @@ export default function SignupPage() {
               required
               minLength={8}
               autoComplete="new-password"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
@@ -76,7 +76,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-full bg-zinc-900 py-2.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+            className="w-full rounded-full bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-60 transition-colors"
           >
             {pending ? "Creating account…" : "Create account"}
           </button>
