@@ -1,13 +1,52 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { signUp, type AuthState } from "@/app/actions/auth";
-
-const initialState: AuthState = {};
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const [state, formAction, pending] = useActionState(signUp, initialState);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const fullName = formData.get("full_name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email || !password || password.length < 8) {
+      setError("Email and a password of at least 8 characters are required.");
+      setLoading(false);
+      return;
+    }
+
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName || null,
+        },
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    // Success
+    router.push("/receipts");
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
@@ -25,7 +64,7 @@ export default function SignupPage() {
           </p>
         </div>
 
-        <form action={formAction} className="mt-8 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div>
             <label htmlFor="full_name" className="block text-sm font-medium text-zinc-700">
               Full name
@@ -35,8 +74,7 @@ export default function SignupPage() {
               type="text"
               name="full_name"
               required
-              autoComplete="name"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -48,8 +86,7 @@ export default function SignupPage() {
               type="email"
               name="email"
               required
-              autoComplete="email"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -62,23 +99,22 @@ export default function SignupPage() {
               name="password"
               required
               minLength={8}
-              autoComplete="new-password"
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2.5 text-sm text-zinc-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
 
-          {state?.error && (
+          {error && (
             <p className="text-sm text-red-600" role="alert">
-              {state.error}
+              {error}
             </p>
           )}
 
           <button
             type="submit"
-            disabled={pending}
+            disabled={loading}
             className="w-full rounded-full bg-emerald-600 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-60 transition-colors"
           >
-            {pending ? "Creating account…" : "Create account"}
+            {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
       </div>
