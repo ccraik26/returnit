@@ -41,7 +41,7 @@ export default function Home() {
               </h1>
               <p className="mt-6 text-lg leading-8 text-zinc-600 sm:text-xl">
                 Upload receipts once. Get reminders before the window closes.
-                Then we pick up your returns on Monday and Friday — no trips to the store.
+                Then we pick up your returns on Monday or Friday — no trips to the store.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Link
@@ -115,7 +115,7 @@ export default function Home() {
                 Simple plans
               </h2>
               <p className="mt-3 text-zinc-600">
-                Free to track receipts. Pay only when you want weekly pickups.
+                Free to track receipts. Pay only when you want a pickup.
               </p>
             </div>
 
@@ -132,16 +132,15 @@ export default function Home() {
                 </ul>
               </div>
 
-              {/* Weekly */}
+              {/* One-time */}
               <div className="rounded-2xl border border-zinc-200 bg-white p-6">
-                <div className="text-sm font-semibold text-zinc-500">Weekly</div>
-                <div className="mt-2 text-3xl font-bold text-zinc-900">$20</div>
-                <p className="mt-1 text-sm text-zinc-500">per week</p>
+                <div className="text-sm font-semibold text-zinc-500">One-time</div>
+                <div className="mt-2 text-3xl font-bold text-zinc-900">$10</div>
+                <p className="mt-1 text-sm text-zinc-500">single pickup</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-600">
-                  <li>• 1 bulk pickup every week</li>
-                  <li>• Monday <strong>or</strong> Friday</li>
-                  <li>• 4 pickups per month</li>
-                  <li>• Cancel anytime</li>
+                  <li>• 1 bulk pickup (Mon or Fri)</li>
+                  <li>• Max 5 items</li>
+                  <li>• Under 40 lbs</li>
                 </ul>
               </div>
 
@@ -151,19 +150,19 @@ export default function Home() {
                   Best value
                 </div>
                 <div className="text-sm font-semibold text-emerald-600">Monthly</div>
-                <div className="mt-2 text-3xl font-bold text-zinc-900">$60</div>
+                <div className="mt-2 text-3xl font-bold text-zinc-900">$29.99</div>
                 <p className="mt-1 text-sm text-zinc-500">per month</p>
                 <ul className="mt-6 space-y-2 text-sm text-zinc-600">
-                  <li>• Bulk pickups every week</li>
-                  <li>• Monday <strong>and</strong> Friday</li>
+                  <li>• Pickup on Monday & Friday</li>
                   <li>• Up to 8 pickups per month</li>
+                  <li>• Unlimited items (max 50 lbs)</li>
                   <li>• Cancel anytime</li>
                 </ul>
               </div>
             </div>
 
             <p className="mt-8 text-center text-sm text-zinc-500">
-              Pickups are bulk — whatever fits in a normal car trip.
+              All pickups happen on Monday or Friday only.
             </p>
           </div>
         </section>
