@@ -1,3 +1,4 @@
+// FINAL PRICING UPDATE 2
 import Link from "next/link";
 
 export default function Home() {
