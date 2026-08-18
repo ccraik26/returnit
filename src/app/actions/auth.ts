@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-type AuthState = {
+export type AuthState = {
   error?: string;
   success?: string;
 };
