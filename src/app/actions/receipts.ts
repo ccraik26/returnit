@@ -1,17 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { scanReceipt } from "@/lib/receipt-scanner";
 
-export type ReceiptState = {
-  error?: string;
-};
-
-export async function createReceipt(
-  prevState: ReceiptState,
-  formData: FormData
-): Promise<ReceiptState> {
+export async function createReceipt(formData: FormData) {
   const supabase = await createClient();
 
   const {
@@ -22,70 +15,65 @@ export async function createReceipt(
     return { error: "You must be logged in." };
   }
 
-  const storeName = (formData.get("store_name") as string)?.trim();
-  const orderNumber = (formData.get("order_number") as string)?.trim() || null;
-  const amountRaw = formData.get("amount") as string;
-  const purchaseDate = (formData.get("purchase_date") as string) || null;
-  const returnWindowEnd = (formData.get("return_window_end") as string) || null;
+  const storeName = formData.get("store_name") as string;
+  const purchaseDate = formData.get("purchase_date") as string;
+  const totalAmount = formData.get("total_amount") as string;
+  const returnByDate = formData.get("return_by_date") as string;
+  const notes = formData.get("notes") as string;
   const file = formData.get("receipt_image") as File | null;
 
-  if (!storeName) {
-    return { error: "Store name is required." };
-  }
+  let imagePath: string | null = null;
+  let scannedData = null;
 
-  let amount: number | null = null;
-  if (amountRaw) {
-    amount = parseFloat(amountRaw);
-    if (isNaN(amount)) {
-      return { error: "Invalid amount." };
-    }
-  }
-
-  let imageUrls: string[] = [];
-
+  // If an image was uploaded, scan it
   if (file && file.size > 0) {
-    if (file.size > 10 * 1024 * 1024) {
-      return { error: "Image must be under 10MB." };
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString("base64");
+
+    try {
+      scannedData = await scanReceipt(base64);
+    } catch (err) {
+      console.error("Receipt scan failed:", err);
+      // Continue without scan results
     }
 
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-
+    // Upload image to Supabase Storage
+    const fileName = `${user.id}/${Date.now()}-${file.name}`;
     const { error: uploadError } = await supabase.storage
       .from("receipts")
-      .upload(path, file, {
+      .upload(fileName, buffer, {
         contentType: file.type,
-        upsert: false,
       });
 
-    if (uploadError) {
-      return { error: `Upload failed: ${uploadError.message}` };
+    if (!uploadError) {
+      imagePath = fileName;
     }
-
-    imageUrls = [path];
   }
 
-  const { data, error } = await supabase
-    .from("receipts")
-    .insert({
-      user_id: user.id,
-      store_name: storeName,
-      order_number: orderNumber,
-      amount,
-      purchase_date: purchaseDate,
-      return_window_end: returnWindowEnd,
-      receipt_image_urls: imageUrls.length ? imageUrls : null,
-      source: file && file.size > 0 ? "upload" : "manual",
-      status: "active",
-      currency: "USD",
-    })
-    .select("id")
-    .single();
+  // Prefer user-typed values, fall back to scanned values
+  const finalStore = storeName || scannedData?.store_name || "Unknown Store";
+  const finalPurchaseDate = purchaseDate || scannedData?.purchase_date;
+  const finalTotal = totalAmount
+    ? parseFloat(totalAmount)
+    : scannedData?.total_amount;
+  const finalReturnBy = returnByDate || scannedData?.return_by_date;
+  const finalNotes = notes || scannedData?.notes;
+
+  const { error } = await supabase.from("receipts").insert({
+    user_id: user.id,
+    store_name: finalStore,
+    purchase_date: finalPurchaseDate,
+    total_amount: finalTotal,
+    return_by_date: finalReturnBy,
+    notes: finalNotes,
+    image_path: imagePath,
+  });
 
   if (error) {
     return { error: error.message };
   }
 
   revalidatePath("/receipts");
-  redirect(`/receipts/${data.id}`);
+  return { success: true, scanned: scannedData };
 }
